@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# working copies of images that are also served from public/
+/hero-bg.jpg
+/mockup.png
+/office.png
