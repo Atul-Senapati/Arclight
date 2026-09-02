@@ -12,9 +12,15 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    /* Lerp rather than duration+easing.
+       In duration mode every wheel tick restarts a 1.15s ease-out toward a new
+       target, so a run of ticks reads as fast-slow-fast-slow — uneven glide
+       that looks like stutter even at a solid 60fps. Lerp approaches the
+       target continuously and is normalised against frame delta, so velocity
+       stays even however the wheel is turned. Programmatic scrollTo calls
+       still pass their own duration and easing. */
     const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.09,
       touchMultiplier: 1.6,
       wheelMultiplier: 1,
     });
