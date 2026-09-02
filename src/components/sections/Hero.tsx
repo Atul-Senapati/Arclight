@@ -99,17 +99,22 @@ export default function Hero() {
           cover-scaling a 1.7:1 plate into a tall viewport magnifies it past
           recognition. */}
       <div aria-hidden className="absolute inset-0 overflow-hidden">
-        <div className="hero-wash absolute inset-0 scale-110 opacity-70 blur-[38px] will-change-transform [mask-image:linear-gradient(to_bottom,transparent_30%,#000_68%)]">
-          {/* 38px of blur erases all detail, so this layer is served tiny —
-              a full-width decode here buys nothing and costs a lot. */}
-          <Image
-            src="/chrome-field.jpg"
-            alt=""
-            fill
-            priority
-            sizes="256px"
-            className="object-cover object-[100%_50%]"
-          />
+        <div className="hero-wash absolute inset-0 scale-110 opacity-70 will-change-transform [mask-image:linear-gradient(to_bottom,transparent_30%,#000_68%)]">
+          {/* The blur sits on this inner layer, not on .hero-wash itself.
+              A filter on the same element the scroll transforms has to be
+              re-evaluated as it moves; with the filter one level in, the
+              blurred raster is stable and the parent just translates it.
+              Same pixels, none of the per-frame work. */}
+          <div className="absolute inset-0 blur-[38px]">
+            <Image
+              src="/chrome-field.jpg"
+              alt=""
+              fill
+              priority
+              sizes="256px"
+              className="object-cover object-[100%_50%]"
+            />
+          </div>
         </div>
         <div className="hero-plate absolute inset-x-[-3%] -top-[6%] aspect-[4224/2460] min-h-[62%] will-change-transform [mask-image:linear-gradient(to_bottom,#000_52%,transparent_94%)]">
           <Image
@@ -250,17 +255,19 @@ export default function Hero() {
       >
         <span
           aria-hidden
-          className="hero-wash pointer-events-none absolute bottom-[-1.75rem] left-1/2 h-[100svh] w-[100vw] -translate-x-1/2 scale-110 opacity-70 blur-[38px] [mask-image:linear-gradient(to_bottom,transparent_30%,#000_68%)] md:bottom-[-2.25rem]"
+          className="hero-wash pointer-events-none absolute bottom-[-1.75rem] left-1/2 h-[100svh] w-[100vw] -translate-x-1/2 scale-110 opacity-70 [mask-image:linear-gradient(to_bottom,transparent_30%,#000_68%)] md:bottom-[-2.25rem]"
         >
-          {/* same source and same low resolution as the plate's wash, so the
-              two stay indistinguishable through the cutout */}
-          <Image
-            src="/chrome-field.jpg"
-            alt=""
-            fill
-            sizes="256px"
-            className="object-cover object-[100%_50%]"
-          />
+          {/* Same source, geometry and inner-blur structure as the plate's
+              wash, so the two stay indistinguishable through the cutout. */}
+          <div className="absolute inset-0 blur-[38px]">
+            <Image
+              src="/chrome-field.jpg"
+              alt=""
+              fill
+              sizes="256px"
+              className="object-cover object-[100%_50%]"
+            />
+          </div>
         </span>
 
         <span className="relative text-sm font-medium text-ink/80 transition-colors duration-500 group-hover:text-ink">
