@@ -65,39 +65,23 @@ export default function Hero() {
         ),
       ];
 
-      // Scroll-linked only — the plate drifts, the copy lifts away.
-      // Both wash copies move together so the cutout stays registered.
-      gsap.to(q(".hero-wash"), {
-        yPercent: 6,
-        ease: "none",
-        scrollTrigger: {
-          trigger: root.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-      gsap.to(q(".hero-plate"), {
-        yPercent: 10,
-        ease: "none",
-        scrollTrigger: {
-          trigger: root.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-      gsap.to(q(".hero-copy"), {
-        yPercent: -9,
-        opacity: 0.12,
-        ease: "none",
-        scrollTrigger: {
-          trigger: root.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
+      /* Scroll-linked only — the plate drifts, the copy lifts away. One
+         ScrollTrigger driving one timeline rather than three identical
+         triggers: a third of the per-frame bookkeeping, and the wash copies
+         can no longer drift apart and break the cutout's registration. */
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+          defaults: { ease: "none" },
+        })
+        .to(q(".hero-wash"), { yPercent: 6 }, 0)
+        .to(q(".hero-plate"), { yPercent: 10 }, 0)
+        .to(q(".hero-copy"), { yPercent: -9, opacity: 0.12 }, 0);
     },
     { scope: root },
   );
@@ -116,12 +100,14 @@ export default function Hero() {
           recognition. */}
       <div aria-hidden className="absolute inset-0 overflow-hidden">
         <div className="hero-wash absolute inset-0 scale-110 opacity-70 blur-[38px] will-change-transform [mask-image:linear-gradient(to_bottom,transparent_30%,#000_68%)]">
+          {/* 38px of blur erases all detail, so this layer is served tiny —
+              a full-width decode here buys nothing and costs a lot. */}
           <Image
             src="/chrome-field.jpg"
             alt=""
             fill
             priority
-            sizes="110vw"
+            sizes="256px"
             className="object-cover object-[100%_50%]"
           />
         </div>
@@ -266,11 +252,13 @@ export default function Hero() {
           aria-hidden
           className="hero-wash pointer-events-none absolute bottom-[-1.75rem] left-1/2 h-[100svh] w-[100vw] -translate-x-1/2 scale-110 opacity-70 blur-[38px] [mask-image:linear-gradient(to_bottom,transparent_30%,#000_68%)] md:bottom-[-2.25rem]"
         >
+          {/* same source and same low resolution as the plate's wash, so the
+              two stay indistinguishable through the cutout */}
           <Image
             src="/chrome-field.jpg"
             alt=""
             fill
-            sizes="110vw"
+            sizes="256px"
             className="object-cover object-[100%_50%]"
           />
         </span>
