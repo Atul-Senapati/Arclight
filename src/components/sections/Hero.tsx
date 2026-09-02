@@ -202,8 +202,12 @@ export default function Hero() {
               </Button>
             </div>
 
-            {/* Small proof, riding the same axis as the CTAs */}
-            <div className="hero-quote hidden shrink-0 items-center gap-3.5 lg:flex">
+            {/* Small proof, riding the same axis as the CTAs. It carries its
+                own light ground: the chrome behind it runs from pale to near
+                black, so grey text and an ink pill both vanish over the dark
+                band. A translucent plate rather than `glass` — no
+                backdrop-filter to pay for on a layer this far right. */}
+            <div className="hero-quote hidden shrink-0 items-center gap-3.5 rounded-full bg-white/75 py-2 pl-2.5 pr-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.9),var(--lift-sm)] lg:flex">
               <div className="flex -space-x-2.5">
                 {heroProof.faces.map((f, i) => (
                   <span
@@ -230,7 +234,7 @@ export default function Hero() {
                     <span className="text-white/55">/5</span>
                   </span>
                 </div>
-                <p className="mt-1 text-[0.8125rem] text-grey-500">
+                <p className="mt-1 text-[0.8125rem] text-grey-600">
                   Join {heroProof.extra.replace("+", "")} happy clients
                 </p>
               </div>
